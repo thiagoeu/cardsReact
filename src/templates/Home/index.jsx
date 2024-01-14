@@ -5,14 +5,14 @@ import React, { Component } from 'react'
 import {loadPosts} from '../../utilitis/load-posts.js'
 import { Posts } from '../../components/Post/index.jsx';
 import Button from "../../components/Button/index.jsx";
-import { click } from "@testing-library/user-event/dist/click.js";
+
 
 export default class Home extends Component {
   state = {
     posts: [],
     allPosts: [],
     page: 0,
-    postsPerPage: 3,
+    postsPerPage: 9,
   };
 
   async componentDidMount() {
@@ -45,15 +45,20 @@ export default class Home extends Component {
   }
 
   render() {
-    const { posts } = this.state
+    const { posts, page, postsPerPage, allPosts } = this.state
+    const noMorePosts = page + postsPerPage >= allPosts.length;;
     return (
 
       <section className='container'>
         <Posts posts={posts} />
-        <Button 
-        text='load more posts'
-        onClick= {this.loadMorePosts}
-        />
+        
+        <div className="button-container">
+          <Button 
+          text='load more posts'
+          onClick= {this.loadMorePosts}
+          disabled = {noMorePosts}
+          />
+        </div>
       </section>
 
 
