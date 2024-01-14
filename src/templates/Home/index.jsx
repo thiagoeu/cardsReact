@@ -1,12 +1,18 @@
 
-import './App.css';
+import "./../../css/global-styles.css"
 import React, { Component } from 'react'
-import {loadPosts} from './utilitis/load-posts.js'
-import { Posts } from './components/Post/index.jsx';
 
-export default class App extends Component {
+import {loadPosts} from '../../utilitis/load-posts.js'
+import { Posts } from '../../components/Post/index.jsx';
+import Button from "../../components/Button/index.jsx";
+import { click } from "@testing-library/user-event/dist/click.js";
+
+export default class Home extends Component {
   state = {
-    posts: []
+    posts: [],
+    allPosts: [],
+    page: 0,
+    postsPerPage: 3,
   };
 
   async componentDidMount() {
@@ -15,8 +21,27 @@ export default class App extends Component {
 
   loadPosts = async () => {
     const postsAndPhotos = await loadPosts();
+    const {page, postsPerPage} = this.state
 
-    this.setState({ posts: postsAndPhotos })
+    this.setState({ 
+      posts: postsAndPhotos.slice(page,postsPerPage),
+      allPosts: postsAndPhotos, 
+    })
+  }
+
+  loadMorePosts = () => {
+    const  {
+      page,
+      postsPerPage,
+      allPosts,
+      posts
+    } = this.state;
+
+    const nextPage = page + postsPerPage;
+    const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);
+
+    posts.push(...nextPosts);
+    this.setState({posts, page: nextPage})
   }
 
   render() {
@@ -25,6 +50,10 @@ export default class App extends Component {
 
       <section className='container'>
         <Posts posts={posts} />
+        <Button 
+        text='load more posts'
+        onClick= {this.loadMorePosts}
+        />
       </section>
 
 
